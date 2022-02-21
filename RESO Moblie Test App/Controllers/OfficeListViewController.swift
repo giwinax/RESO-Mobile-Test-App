@@ -6,12 +6,15 @@
 //
 
 import UIKit
+import CoreLocation
 
 class OfficeListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var officeList: [OfficeListModel] = []
     
     private let cellId = "cellId"
+    
+    
     
     lazy var tableView: UITableView = {
         
@@ -59,7 +62,7 @@ class OfficeListViewController: UIViewController, UITableViewDelegate, UITableVi
         NVHorizontalPadding.spacing = 34
         NVHorizontalPadding.translatesAutoresizingMaskIntoConstraints = false
         
-        // TODO: GLOBAL: NVBar, appropriate cells size and highlighting, 
+        // TODO: GLOBAL: NVBar, appropriate cells size and highlighting,
         
         
         navigationBar.addSubview(NVHorizontalPadding)
@@ -83,19 +86,103 @@ class OfficeListViewController: UIViewController, UITableViewDelegate, UITableVi
         //if cell.address.numberOfLines > 1 {
         return 80
         //} else {
-         //   return 60
+        //   return 60
         //}
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath as IndexPath) as! TableViewCell
-        cell.name.text = officeList[indexPath.row].SSHORTNAME
-        cell.address.text = officeList[indexPath.row].SSHORTADDRESS
-        cell.state.text = "Открыт"
-        cell.distance.text = "до офиса: \(19.2) км."
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath as IndexPath)
+        
+        let graf = "Открыт"
+        
+        
+        func formatName(fullString: String) -> NSMutableAttributedString{
+            let range = (fullString as NSString).range(of: fullString)
+            var myMutableString = NSMutableAttributedString()
+            myMutableString = NSMutableAttributedString(string: fullString)
+            myMutableString.setAttributes([.font: UIFont.boldSystemFont(ofSize: 14), .foregroundColor: UIColor.black], range: range)
+            return myMutableString
+        }
+        
+        func addPaddingOfSize(_ ofSize: Double) -> NSMutableAttributedString{
+            let fullString = "\n"
+            let range = (fullString as NSString).range(of: fullString)
+            var myMutableString = NSMutableAttributedString()
+            myMutableString = NSMutableAttributedString(string: fullString)
+            myMutableString.setAttributes([.font: UIFont.systemFont(ofSize: CGFloat(ofSize))], range: range)
+            return myMutableString
+        }
+        
+        func formatAddress(fullString: String) -> NSMutableAttributedString{
+            let range = (fullString as NSString).range(of: fullString)
+            var myMutableString = NSMutableAttributedString()
+            myMutableString = NSMutableAttributedString(string: fullString)
+            myMutableString.setAttributes([.font: UIFont.systemFont(ofSize: 12), .foregroundColor : UIColor.lightGray], range: range)
+            return myMutableString
+        }
+        func formatGraf(fullString: String) -> NSMutableAttributedString{
+            let range = (fullString as NSString).range(of: fullString)
+            var myMutableString = NSMutableAttributedString()
+            myMutableString = NSMutableAttributedString(string: fullString)
+            myMutableString.setAttributes([.font: UIFont.systemFont(ofSize: 12), .foregroundColor : UIColor(red: 35/255, green: 128/255, blue: 63/255, alpha: 1.0)], range: range)
+            return myMutableString
+        }
+        func formatDistance(fullString: String) -> NSMutableAttributedString{
+            let range = (fullString as NSString).range(of: fullString)
+            var myMutableString = NSMutableAttributedString()
+            myMutableString = NSMutableAttributedString(string: fullString)
+            myMutableString.setAttributes([.font: UIFont.systemFont(ofSize: 12), .foregroundColor : UIColor.lightGray], range: range)
+            return myMutableString
+        }
+        
+        func getOfficeDistance (_ officeIndex: Int) -> Float {
+            
+            let OfficeCoordinate = CLLocation(latitude: self.officeList[officeIndex].NLAT, longitude: self.officeList[officeIndex].NLONG)
+
+            let currentLocation = CLLocation(latitude: 55.755826, longitude: 37.6172999)
+            
+            return  Float(OfficeCoordinate.distance(from: currentLocation)) / 1000.0
+            
+        }
+        
+        let nameFormated = formatName(fullString: "\(officeList[indexPath.row].SSHORTNAME)\n")
+        let paddingNameAddress = addPaddingOfSize(5)
+        let addressFormated = formatAddress(fullString: "\(officeList[indexPath.row].SSHORTADDRESS)\n")
+        let paddingAddressGrafDistance = addPaddingOfSize(7)
+        let grafFormated = formatGraf(fullString: graf)
+        let distanceFormated = formatDistance(fullString: String(format: " до офиса: %.1f км.", getOfficeDistance(indexPath.row)))
+        
+        
+        
+        let combination = NSMutableAttributedString()
+        combination.append(nameFormated)
+        combination.append(paddingNameAddress)
+        combination.append(addressFormated)
+        combination.append(paddingAddressGrafDistance)
+        combination.append(grafFormated)
+        combination.append(distanceFormated)
+        
+        
+        // set the custom font and color for the 0,1 range in string
+        //amountText.setAttributes(combination)
+        // if you want, you can add more attributes for different ranges calling .setAttributes many times
+        
+        // set the attributed string to the UILabel object
+        
+        //name.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
+        cell.textLabel?.numberOfLines = 6
+        cell.textLabel?.attributedText = combination
+        cell.textLabel?.lineBreakMode = .byWordWrapping
+        cell.textLabel?.attributedText = combination
         cell.accessoryType = .disclosureIndicator
-        //cell.textLabel?.text = officeList[indexPath.row].SSHORTNAME
+        
+        //cell.name.text = officeList[indexPath.row].SSHORTNAME
+        //        cell.address.text = officeList[indexPath.row].SSHORTADDRESS
+        //        cell.state.text = "Открыт"
+        //        cell.distance.text = "до офиса: \(19.2) км."
+        //        cell.accessoryType = .disclosureIndicator
+        //        cell.textLabel?.text = officeList[indexPath.row].SSHORTNAME
         return cell
     }
     

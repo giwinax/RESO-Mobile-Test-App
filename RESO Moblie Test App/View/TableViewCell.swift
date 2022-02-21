@@ -81,7 +81,8 @@ class TableViewCell: UITableViewCell {
         finalStack.alignment = .fill
         finalStack.spacing = 7
         finalStack.translatesAutoresizingMaskIntoConstraints = false
-        
+        finalStack.layer.zPosition = 0
+        self.layer.zPosition = 10
         self.addSubview(finalStack)
     }
     

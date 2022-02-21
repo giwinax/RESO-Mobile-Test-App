@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct OfficeListModel: Decodable {
     let IDOKRUG: Int
@@ -88,9 +89,7 @@ class Office {
         return self.List.count
     }
     // TODO: implement func forr calculating distance
-    func getOfficeDistance (_ officeId: Int) -> Float {
-        return 1.2
-    }
+
     // TODO: implement func for getting the open/closed data of office using SGRAF/SGRAFSPR
     func isOpen (_ officeId: Int) -> Bool {
         return true
