@@ -23,5 +23,7 @@
 	</dict>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
+	<key>Locations Always and When In Use Usage Description</key>
+	<string>This app asks for location permisions</string>
 </dict>
 </plist>

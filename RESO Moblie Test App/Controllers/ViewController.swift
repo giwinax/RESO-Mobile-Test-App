@@ -7,11 +7,23 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+import CoreLocation
+import CoreLocationUI
+import MapKit
+
+
+
+class ViewController: UIViewController, CLLocationManagerDelegate {
+    @IBOutlet weak var map: MKMapView!
+    let locationManager = CLLocationManager()
     
     
     
     override func loadView() {
+        
+        
+        
+        
         view = UIView()
         view.backgroundColor = .white
         let getOfficeListButton = UIButton()
@@ -33,24 +45,43 @@ class ViewController: UIViewController {
         let heightConstraint = getOfficeListButton.heightAnchor.constraint(equalToConstant: 100)
         view.addConstraints([horizontalConstraint, verticalConstraint, widthConstraint, heightConstraint])
         self.view.addSubview(getOfficeListButton)
+        
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        locationManager.delegate = self
+
     }
     
+
+    func locationManager(
+        _ manager: CLLocationManager,
+        didUpdateLocations locations: [CLLocation]
+    ) {
+        if let location = locations.first {
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            // Handle location update
+        }
+    }
+
+    
     @IBAction func getOfficeListButtonPressed() {
+        locationManager.requestLocation()
+        
         let office = Office()
         let officeList = office.List
         if office.error != nil {
             self.errorHandling(office.error!)
         } else {
             
-        let OfficeListViewController = OfficeListViewController()
-        OfficeListViewController.modalPresentationStyle = .fullScreen
-        present(OfficeListViewController, animated: false, completion: nil)
-        OfficeListViewController.officeList = officeList
-        navigationController?.pushViewController(OfficeListViewController, animated: false)
+            let OfficeListViewController = OfficeListViewController()
+            OfficeListViewController.modalPresentationStyle = .fullScreen
+            present(OfficeListViewController, animated: false, completion: nil)
+            OfficeListViewController.officeList = officeList
+            navigationController?.pushViewController(OfficeListViewController, animated: false)
         }
     }
     
@@ -60,5 +91,6 @@ class ViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
-
+    
 }
+

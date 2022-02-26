@@ -55,6 +55,7 @@ class Office {
     public var List: [OfficeListModel] = []
     public var error: Error?
     
+    
     init() {
         fetch() { (result) in
             switch result {
@@ -88,8 +89,8 @@ class Office {
     func getNumberOfOffices() -> Int {
         return self.List.count
     }
-    // TODO: implement func forr calculating distance
 
+    
     // TODO: implement func for getting the open/closed data of office using SGRAF/SGRAFSPR
     func isOpen (_ officeId: Int) -> Bool {
         return true
